@@ -1,0 +1,62 @@
+{{template "admin" .}}
+
+{{define "adminsubpage"}}
+    <div class="admin-reservation-celendar">
+        {{$sm := .StringMap}}
+        <div class="reservation-celendar-top">
+            <a href="/admin/reservations-celendar?y={{index $sm "last_year"}}&m={{index $sm "last_month"}}">{{"< "}}Last Month</a>
+            <h1>
+                {{$sm.now_year}} - {{$sm.now_month}}
+            </h1>
+            <a href="/admin/reservations-celendar?y={{index $sm "next_year"}}&m={{index $sm "next_month"}}">Next Month{{" >"}}</a>
+        </div>
+        <div class="reservation-celendar-main">
+
+        </div>
+        <div class="celendar-info"> 
+            <div class="celendar-info-container celendar-info-reserved">
+                <span class="span-color-container span-color-reserved">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                Reserved Days
+            </div>
+            <div class="celendar-info-container celendar-info-unreserved">
+                <span class="span-color-container span-color-unreserved">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                Unreserved Days
+            </div>
+        </div>
+    </div>
+    <script defer>
+        function InitCelendar() {
+        const parentElm = document.querySelector(".reservation-celendar-main");
+        
+        let year = {{index $sm "now_year"}};
+        let month = {{index $sm "now_month"}};
+        let daysInMonth = new Date(year , month , 0).getDate();
+
+            for (let i = 1; i < daysInMonth+1; i++) {
+                let child = document.createElement("div");
+                child.classList.add("celendar-child");
+                if (i < 10) {
+                    child.innerHTML = `0${i}`;
+                } else {
+                    child.innerHTML = i;
+                }
+                parentElm.appendChild(child);
+            }
+        }
+
+        InitCelendar();
+
+        function InitColors(daysArr) {
+            let allChilds = document.querySelectorAll(".celendar-child");
+            for (let x in daysArr) {
+                for (let child in allChilds) {
+                    if (allChilds[child].innerText === daysArr[x]) {
+                        allChilds[child].classList.add("celendar-reserved");
+                    }
+                }
+            }
+        } 
+
+        InitColors({{index .Data "times"}})
+    </script>
+{{end}}
